@@ -114,3 +114,9 @@ The application uses the following tables:
 - `quizzes`: Quiz metadata linked to lessons
 - `questions`: Individual quiz questions with options
 - `attempts`: Student quiz attempts and scores
+
+## Acknowledgments
+
+- Built for bridging educational gaps
+- Inspired by the need for equitable education access
+
