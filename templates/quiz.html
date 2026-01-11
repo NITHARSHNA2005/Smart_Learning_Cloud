@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}{{ quiz['title'] }} - Smart Learning Cloud{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 2rem;">
+  <a href="javascript:history.back()" style="color: var(--primary); text-decoration: none; font-weight: 500;">
+    ← Back to Lesson
+  </a>
+</div>
+
+<div class="card" style="margin-bottom: 2rem;">
+  <h1 style="margin: 0 0 1rem 0; color: var(--primary); display: flex; align-items: center; gap: 0.5rem;">
+    📋 {{ quiz['title'] }}
+  </h1>
+  <p style="color: var(--text-light); margin: 0;">Answer all questions to test your understanding. Take your time!</p>
+</div>
+
+<div class="card" style="margin-bottom: 2rem; background: linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(14, 165, 233, 0.1) 100%); border: 1px solid rgba(37, 99, 235, 0.2);">
+  <div style="display: flex; align-items: center; gap: 1rem;">
+    <div style="background: var(--gradient); color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">🎓</div>
+    <div>
+      <div style="font-weight: 600; color: var(--primary);">Taking quiz as: {{ session.username }}</div>
+      <div style="color: var(--text-light); font-size: 0.9rem;">Your progress will be saved automatically</div>
+    </div>
+  </div>
+</div>
+
+{% if questions %}
+<form id="quiz-form" onsubmit="return false;">
+  {% for q in questions %}
+  <div class="question card" style="margin-bottom: 1.5rem;">
+    <h3 style="margin: 0 0 1rem 0; color: var(--primary);">
+      Question {{ loop.index }} of {{ questions|length }}
+    </h3>
+    <p style="font-size: 1.1rem; font-weight: 500; margin-bottom: 1.5rem;">
+      {{ q['question'] }}
+    </p>
+    
+    <div style="display: grid; gap: 0.75rem;">
+      {% for opt in q['options'] %}
+      <label style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem; border: 2px solid var(--border); border-radius: 0.5rem; cursor: pointer; transition: all 0.2s;" 
+             onmouseover="this.style.borderColor='var(--primary)'; this.style.backgroundColor='rgba(30, 64, 175, 0.05)'" 
+             onmouseout="this.style.borderColor='var(--border)'; this.style.backgroundColor='transparent'">
+        <input type="radio" name="q{{ q['id'] }}" value="{{ loop.index0 }}" 
+               onchange="this.parentElement.style.borderColor='var(--primary)'; this.parentElement.style.backgroundColor='rgba(30, 64, 175, 0.1)'">
+        <span style="font-weight: 500;">{{ loop.index }}.</span>
+        <span>{{ opt }}</span>
+      </label>
+      {% endfor %}
+    </div>
+  </div>
+  {% endfor %}
+  
+  <div class="card" style="text-align: center; margin-top: 2rem;">
+    <button onclick="submitQuiz({{ quiz['id'] }})" class="btn" style="font-size: 1.1rem; padding: 1rem 2rem;">
+      ✨ Submit Quiz
+    </button>
+    <p style="margin: 1rem 0 0 0; color: var(--text-light); font-size: 0.9rem;">
+      Make sure you've answered all questions before submitting
+    </p>
+  </div>
+</form>
+
+<div id="result" class="card" style="display:none; margin-top: 2rem;"></div>
+
+{% else %}
+<div class="alert alert-info">
+  <strong>No questions available.</strong> The teacher is still preparing this quiz.
+</div>
+{% endif %}
+
+<div class="card" style="margin-top: 2rem; background: var(--bg);">
+  <h3 style="margin-top: 0;">📝 Quiz Tips</h3>
+  <ul style="margin: 0; padding-left: 1.5rem;">
+    <li>Read each question carefully before selecting an answer</li>
+    <li>If unsure, eliminate obviously wrong options first</li>
+    <li>Don't spend too much time on one question</li>
+    <li>Review your answers before submitting</li>
+    <li>Use the AI tutor if you need concept clarification</li>
+  </ul>
+</div>
+{% endblock %}

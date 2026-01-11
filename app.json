@@ -1,0 +1,38 @@
+{
+  "name": "Smart Learning Cloud",
+  "description": "AI-powered smart learning platform bridging urban-rural educational gaps",
+  "repository": "https://github.com/your-username/smart-learning-cloud",
+  "logo": "https://cdn-icons-png.flaticon.com/512/3048/3048425.png",
+  "keywords": ["education", "ai", "learning", "cloud", "rural-education"],
+  "image": "heroku/python",
+  "stack": "heroku-22",
+  "buildpacks": [
+    {
+      "url": "heroku/python"
+    }
+  ],
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "basic"
+    }
+  },
+  "addons": [
+    {
+      "plan": "heroku-postgresql:mini"
+    }
+  ],
+  "env": {
+    "FLASK_ENV": {
+      "description": "Flask environment",
+      "value": "production"
+    },
+    "SECRET_KEY": {
+      "description": "Secret key for Flask sessions",
+      "generator": "secret"
+    }
+  },
+  "scripts": {
+    "postdeploy": "python -c \"import app; app.init_db()\""
+  }
+}

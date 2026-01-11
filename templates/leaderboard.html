@@ -1,0 +1,232 @@
+{% extends "base.html" %}
+{% block title %}Leaderboard - Smart Learning Cloud{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="page-header">
+    <h1>🏆 Leaderboard</h1>
+    <p>Compete with fellow students and climb the ranks!</p>
+  </div>
+
+  <div class="leaderboard-container">
+    <div class="user-stats-card">
+      <h3>📊 Your Stats</h3>
+      <div class="stats-row">
+        <div class="stat-item">
+          <span class="stat-icon">⭐</span>
+          <span class="stat-value">{{ user_stats.total_points if user_stats else 0 }}</span>
+          <span class="stat-label">Total Points</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-icon">🔥</span>
+          <span class="stat-value">{{ user_stats.current_streak if user_stats else 0 }}</span>
+          <span class="stat-label">Current Streak</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="leaderboard-list">
+      <h3>🥇 Top Students</h3>
+      {% for student in top_students %}
+        <div class="leaderboard-item {{ 'current-user' if student.name == session.username }}">
+          <div class="rank">
+            {% if loop.index == 1 %}🥇
+            {% elif loop.index == 2 %}🥈
+            {% elif loop.index == 3 %}🥉
+            {% else %}{{ loop.index }}
+            {% endif %}
+          </div>
+          <div class="student-info">
+            <div class="student-name">{{ student.name }}</div>
+            <div class="student-streak">🔥 {{ student.streak }} day streak</div>
+          </div>
+          <div class="student-points">{{ student.points }} pts</div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <div class="achievement-section">
+      <h3>🎖️ Available Badges</h3>
+      <div class="badges-grid">
+        <div class="badge-card">
+          <div class="badge-icon">🌟</div>
+          <div class="badge-name">First Steps</div>
+          <div class="badge-desc">Complete your first quiz</div>
+        </div>
+        <div class="badge-card">
+          <div class="badge-icon">🔥</div>
+          <div class="badge-name">On Fire</div>
+          <div class="badge-desc">Maintain a 7-day streak</div>
+        </div>
+        <div class="badge-card">
+          <div class="badge-icon">🎯</div>
+          <div class="badge-name">Perfect Score</div>
+          <div class="badge-desc">Score 100% on any quiz</div>
+        </div>
+        <div class="badge-card">
+          <div class="badge-icon">📚</div>
+          <div class="badge-name">Scholar</div>
+          <div class="badge-desc">Complete 10 lessons</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.leaderboard-container {
+  max-width: 800px;
+  margin: 0 auto;
+  display: grid;
+  gap: 2rem;
+}
+
+.user-stats-card {
+  background: var(--gradient);
+  color: white;
+  padding: 2rem;
+  border-radius: 1rem;
+  text-align: center;
+}
+
+.user-stats-card h3 {
+  margin: 0 0 1.5rem 0;
+  color: white;
+}
+
+.stats-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.stat-icon {
+  font-size: 2rem;
+}
+
+.stat-value {
+  font-size: 2.5rem;
+  font-weight: 800;
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.leaderboard-list {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  padding: 1.5rem;
+}
+
+.leaderboard-list h3 {
+  margin: 0 0 1.5rem 0;
+  color: var(--primary);
+}
+
+.leaderboard-item {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  margin-bottom: 0.75rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  transition: all 0.3s ease;
+}
+
+.leaderboard-item:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.leaderboard-item.current-user {
+  background: rgba(37, 99, 235, 0.1);
+  border-color: var(--primary);
+}
+
+.rank {
+  font-size: 1.5rem;
+  font-weight: 800;
+  width: 60px;
+  text-align: center;
+}
+
+.student-info {
+  flex: 1;
+  margin-left: 1rem;
+}
+
+.student-name {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.student-streak {
+  font-size: 0.85rem;
+  color: var(--text-light);
+}
+
+.student-points {
+  font-weight: 700;
+  color: var(--primary);
+  font-size: 1.1rem;
+}
+
+.achievement-section {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  padding: 1.5rem;
+}
+
+.achievement-section h3 {
+  margin: 0 0 1.5rem 0;
+  color: var(--primary);
+}
+
+.badges-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+}
+
+.badge-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  padding: 1rem;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.badge-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.badge-icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.badge-name {
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 0.25rem;
+}
+
+.badge-desc {
+  font-size: 0.8rem;
+  color: var(--text-light);
+}
+</style>
+{% endblock %}

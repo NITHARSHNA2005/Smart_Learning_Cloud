@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Smart Learning Cloud - AI-Powered Education Platform{% endblock %}
+
+{% block content %}
+<div class="hero">
+  <h1>Smart Learning Cloud</h1>
+  <p class="lead">Bridging Urban-Rural Educational Gaps with AI-Powered Learning</p>
+  <p>Connect with expert teachers, take interactive quizzes, and get instant help from our AI tutor</p>
+</div>
+
+<div class="stats-grid">
+  <div class="stat-card">
+    <span class="stat-number">{{ lessons|length }}</span>
+    <span class="stat-label">Available Courses</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-number">24/7</span>
+    <span class="stat-label">AI Tutor Support</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-number">100%</span>
+    <span class="stat-label">Cloud-Based</span>
+  </div>
+</div>
+
+<h2 class="section-title">Featured Courses</h2>
+{% if lessons %}
+<div class="cards">
+  {% for l in lessons %}
+  <div class="card">
+    <h3>{{ l['title'] }}</h3>
+    <p>{{ l['description'] }}</p>
+    <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+      <a class="btn" href="{{ url_for('lesson_page', lesson_id=l['id']) }}">
+        📺 Watch Lesson
+      </a>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="alert alert-info">
+  <strong>No courses available yet.</strong> Teachers can create new courses from the Teacher dashboard.
+</div>
+{% endif %}
+
+<div class="cards" style="margin-top: 3rem;">
+  <div class="card">
+    <h3>🎓 For Students</h3>
+    <p>Access live classes, take quizzes, and get personalized learning recommendations</p>
+    <a class="btn btn-secondary" href="{{ url_for('student') }}">Student Portal</a>
+  </div>
+  <div class="card">
+    <h3>👩‍🏫 For Teachers</h3>
+    <p>Create engaging video lessons, design quizzes, and track student progress</p>
+    <a class="btn btn-success" href="{{ url_for('teacher') }}">Teacher Dashboard</a>
+  </div>
+</div>
+{% endblock %}

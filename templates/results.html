@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+
+{% block title %}Results & Analytics - Smart Learning Cloud{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+  <h1>📈 Results & Analytics</h1>
+</div>
+
+{% if attempts %}
+<!-- Statistics Overview -->
+<div class="stats-grid" style="margin-bottom: 3rem;">
+  <div class="stat-card">
+    <span class="stat-number">{{ analytics.total_attempts or 0 }}</span>
+    <span class="stat-label">Total Attempts</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-number">{{ "%.1f"|format(analytics.average_score or 0) }}%</span>
+    <span class="stat-label">Average Score</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-number">{{ analytics.highest_score or 0 }}%</span>
+    <span class="stat-label">Highest Score</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-number">{{ "%.1f"|format(analytics.pass_rate or 0) }}%</span>
+    <span class="stat-label">Pass Rate</span>
+  </div>
+</div>
+
+<!-- Recent Attempts -->
+<div class="card">
+  <h2 style="margin-top: 0; display: flex; align-items: center; gap: 0.5rem;">
+    📅 Recent Quiz Attempts
+  </h2>
+  
+  <div class="table-container">
+    <table class="styled">
+      <thead>
+        <tr>
+          <th>Student Name</th>
+          <th>Quiz ID</th>
+          <th>Score</th>
+          <th>Performance</th>
+          <th>Date & Time</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in attempts|reverse %}
+        <tr>
+          <td style="font-weight: 600;">{{ r['student_name'] }}</td>
+          <td>
+            <span class="badge badge-success">Quiz #{{ r['quiz_id'] }}</span>
+          </td>
+          <td style="font-weight: 700; font-size: 1.1rem;">
+            {{ r['score'] }}%
+          </td>
+          <td>
+            {% if r['score'] >= 90 %}
+              <span class="badge badge-success">Excellent</span>
+            {% elif r['score'] >= 70 %}
+              <span class="badge badge-success">Good</span>
+            {% elif r['score'] >= 50 %}
+              <span class="badge badge-warning">Average</span>
+            {% else %}
+              <span class="badge badge-danger">Needs Improvement</span>
+            {% endif %}
+          </td>
+          <td style="color: var(--text-light);">
+            {{ r['taken_at'][:16]|replace('T', ' at ') }}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Performance Analysis -->
+<div class="cards" style="margin-top: 2rem;">
+  <div class="card">
+    <h3 style="margin-top: 0; color: var(--success);">🏆 Top Performers</h3>
+    {% if analytics.top_performers %}
+      {% for attempt in analytics.top_performers %}
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border-bottom: 1px solid var(--border);">
+        <span style="font-weight: 500;">{{ attempt['student_name'] }}</span>
+        <span class="badge badge-success">{{ attempt['score'] }}%</span>
+      </div>
+      {% endfor %}
+    {% else %}
+      <p style="color: var(--text-light); text-align: center; margin: 2rem 0;">No attempts yet</p>
+    {% endif %}
+  </div>
+  
+  <div class="card">
+    <h3 style="margin-top: 0; color: var(--warning);">📊 Score Distribution</h3>
+    <div style="margin: 1rem 0;">
+      <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+        <span>Excellent (90-100%)</span>
+        <span>{{ analytics.excellent or 0 }}</span>
+      </div>
+      <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+        <span>Good (70-89%)</span>
+        <span>{{ analytics.good or 0 }}</span>
+      </div>
+      <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+        <span>Average (50-69%)</span>
+        <span>{{ analytics.average or 0 }}</span>
+      </div>
+      <div style="display: flex; justify-content: space-between;">
+        <span>Needs Improvement (<50%)</span>
+        <span>{{ analytics.poor or 0 }}</span>
+      </div>
+    </div>
+  </div>
+  
+  <div class="card">
+    <h3 style="margin-top: 0; color: var(--primary);">📝 Insights</h3>
+    <ul style="margin: 0; padding-left: 1.5rem;">
+      {% if analytics.average_score %}
+        {% if analytics.average_score >= 70 %}
+          <li style="color: var(--success);">Overall performance is excellent! ({{ "%.1f"|format(analytics.average_score) }}% average)</li>
+        {% else %}
+          <li style="color: var(--warning);">Students may need additional support ({{ "%.1f"|format(analytics.average_score) }}% average)</li>
+        {% endif %}
+        
+        {% if analytics.pass_rate >= 70 %}
+          <li style="color: var(--success);">High pass rate indicates effective teaching ({{ "%.1f"|format(analytics.pass_rate) }}%)</li>
+        {% else %}
+          <li style="color: var(--warning);">Consider reviewing difficult topics ({{ "%.1f"|format(analytics.pass_rate) }}% pass rate)</li>
+        {% endif %}
+        
+        {% if analytics.highest_score == 100 %}
+          <li style="color: var(--success);">Some students achieved perfect scores! 🎉</li>
+        {% endif %}
+      {% else %}
+        <li style="color: var(--text-light);">No data available yet - encourage students to take quizzes!</li>
+      {% endif %}
+      
+      <li>Encourage students with low scores to use the AI tutor for personalized help</li>
+      <li>Consider creating additional practice materials for challenging topics</li>
+    </ul>
+  </div>
+</div>
+
+{% else %}
+<div class="alert alert-info">
+  <strong>No quiz attempts yet.</strong> Results will appear here once students start taking quizzes.
+</div>
+
+<div class="card" style="text-align: center; margin-top: 2rem;">
+  <h3>🚀 Get Started</h3>
+  <p>Encourage students to take quizzes to see analytics here!</p>
+  <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+    <a href="{{ url_for('student') }}" class="btn">🎓 Student Portal</a>
+    <a href="{{ url_for('teacher') }}" class="btn btn-secondary">👩🏫 Teacher Dashboard</a>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

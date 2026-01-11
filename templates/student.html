@@ -1,0 +1,300 @@
+{% extends "base.html" %}
+
+{% block title %}Student Portal - Smart Learning Cloud{% endblock %}
+
+{% block content %}
+<div class="hero" style="margin: -2rem -2rem 3rem -2rem; padding: 3rem 2rem;">
+  <h1 style="margin: 0 0 1rem 0; font-size: 2.5rem;">🎓 Welcome to Your Learning Journey</h1>
+  <p class="lead">Explore courses, take quizzes, and get instant help from our AI tutor</p>
+  <div class="stats-grid" style="margin: 2rem auto 0; max-width: 600px; grid-template-columns: repeat(3, 1fr);">
+    <div class="stat-card" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white;">
+      <span class="stat-number" style="color: white;">{{ lessons|length }}</span>
+      <span class="stat-label" style="color: rgba(255,255,255,0.9);">Available Courses</span>
+    </div>
+    <div class="stat-card" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white;">
+      <span class="stat-number" style="color: white;">24/7</span>
+      <span class="stat-label" style="color: rgba(255,255,255,0.9);">AI Support</span>
+    </div>
+    <div class="stat-card" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white;">
+      <span class="stat-number" style="color: white;">∞</span>
+      <span class="stat-label" style="color: rgba(255,255,255,0.9);">Learning Opportunities</span>
+    </div>
+  </div>
+</div>
+
+<div class="alert alert-info">
+  <strong>🤖 AI Tutor Available!</strong> Click the chat button in the bottom-right corner for instant help with concepts, quizzes, and study tips.
+</div>
+
+<h2 class="section-title">📚 Available Courses</h2>
+{% if lessons %}
+<div class="cards">
+  {% for l in lessons %}
+  <div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+      <h3 style="margin: 0; color: var(--primary);">{{ l['title'] }}</h3>
+      <span class="badge badge-success">✨ Ready</span>
+    </div>
+    <p style="color: var(--text-light); line-height: 1.6;">{{ l['description'] }}</p>
+    
+    <div style="display: flex; gap: 1rem; margin: 1.5rem 0; flex-wrap: wrap; font-size: 0.85rem;">
+      {% if l['video_url'] %}
+        <span style="color: var(--success); display: flex; align-items: center; gap: 0.25rem;">
+          <span style="font-size: 1rem;">🎥</span> Video Lesson
+        </span>
+      {% endif %}
+      <span style="color: var(--text-muted); display: flex; align-items: center; gap: 0.25rem;">
+        <span style="font-size: 1rem;">📅</span> {{ l['created_at'][:10] }}
+      </span>
+      <span style="color: var(--secondary); display: flex; align-items: center; gap: 0.25rem;">
+        <span style="font-size: 1rem;">🧠</span> Interactive Quiz
+      </span>
+    </div>
+    
+    <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; margin-top: 1.5rem;">
+      <a class="btn" href="{{ url_for('lesson_page', lesson_id=l['id']) }}" style="flex: 1; max-width: 180px; justify-content: center; text-align: center;">
+        🚀 Start Learning
+      </a>
+      <a class="btn btn-secondary" href="{{ url_for('messages') }}" style="flex: 1; max-width: 150px; justify-content: center; text-align: center;">
+        💬 Ask Teacher
+      </a>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="alert alert-info" style="text-align: center; padding: 2rem;">
+  <div style="font-size: 3rem; margin-bottom: 1rem;">📚</div>
+  <strong>No courses available yet</strong><br>
+  <span style="color: var(--text-light);">Check back soon for new lessons from our expert teachers!</span>
+</div>
+{% endif %}
+
+<div class="cards" style="margin-top: 4rem;">
+  <div class="card">
+    <h3 style="color: var(--primary); display: flex; align-items: center; gap: 0.5rem;">
+      <span style="font-size: 1.5rem;">🏆</span> Your Learning Path
+    </h3>
+    <p style="color: var(--text-light); margin-bottom: 1.5rem;">Follow our proven methodology for effective learning:</p>
+    <div style="display: grid; gap: 1rem;">
+      <div style="display: flex; align-items: center; gap: 1rem; padding: 0.75rem; background: var(--bg); border-radius: 0.5rem;">
+        <span style="background: var(--primary); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 600;">1</span>
+        <span>Watch video lessons with full attention</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 1rem; padding: 0.75rem; background: var(--bg); border-radius: 0.5rem;">
+        <span style="background: var(--primary); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 600;">2</span>
+        <span>Take comprehensive notes</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 1rem; padding: 0.75rem; background: var(--bg); border-radius: 0.5rem;">
+        <span style="background: var(--primary); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 600;">3</span>
+        <span>Test knowledge with interactive quizzes</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 1rem; padding: 0.75rem; background: var(--bg); border-radius: 0.5rem;">
+        <span style="background: var(--primary); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 600;">4</span>
+        <span>Get instant help from AI tutor</span>
+      </div>
+    </div>
+  </div>
+  
+  <div class="card">
+    <h3 style="color: var(--primary); display: flex; align-items: center; gap: 0.5rem;">
+      <span style="font-size: 1.5rem;">📊</span> Track Your Progress
+    </h3>
+    <p style="color: var(--text-light); margin-bottom: 1.5rem;">Monitor your learning journey and celebrate achievements</p>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; align-items: center;">
+      <a class="btn btn-secondary" href="{{ url_for('study_notes') }}" style="justify-content: center; text-align: center;">
+        📋 Study Notes
+      </a>
+      <a class="btn" href="{{ url_for('math_games') }}" style="background: var(--success); justify-content: center; text-align: center;">
+        🎮 Math Games
+      </a>
+      <a class="btn" href="{{ url_for('leaderboard') }}" style="background: var(--warning); justify-content: center; text-align: center;">
+        🏆 Leaderboard
+      </a>
+      <a class="btn" href="{{ url_for('virtual_lab') }}" style="background: var(--secondary); justify-content: center; text-align: center;">
+        🧪 Virtual Lab
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- AI Tutor Chatbot Toggle Button -->
+<button id="chat-toggle" class="chat-toggle" onclick="toggleChat()">
+  🤖
+</button>
+
+<!-- Enhanced AI Tutor Chatbot -->
+<div id="chatbox" class="chatbox">
+  <div class="chat-header">
+    <div class="chat-header-left">
+      <div class="chat-avatar">🤖</div>
+      <div>
+        <div style="font-weight: 600;">AI Tutor</div>
+        <div class="chat-status">
+          <div class="status-dot"></div>
+          Online
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="chat-body" id="chat-body">
+    <div class="chat-message bot">
+      <div style="margin-bottom: 0.5rem;">👋 Hello! I'm your personal AI tutor, ready to help you succeed!</div>
+      <div style="font-size: 0.9rem; color: var(--text-light);">
+        <strong>I can assist you with:</strong>
+        <div style="margin: 0.75rem 0; display: grid; gap: 0.5rem;">
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <span style="color: var(--success);">📚</span> Explaining math concepts and formulas
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <span style="color: var(--secondary);">❓</span> Answering your study questions
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <span style="color: var(--warning);">🎯</span> Quiz tips and guidance
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <span style="color: var(--primary);">💡</span> Study strategies and motivation
+          </div>
+        </div>
+        <strong>What would you like to learn today?</strong>
+      </div>
+    </div>
+  </div>
+  <div class="chat-input">
+    <input id="chat-input" placeholder="Ask me anything about your studies..." onkeypress="if(event.key==='Enter' && !event.shiftKey) { event.preventDefault(); sendChat(); }" />
+    <button id="chat-send" class="chat-send-btn" onclick="sendChat()">
+      ➤
+    </button>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Chat functionality
+let chatOpen = false;
+
+function toggleChat() {
+  const chatbox = document.getElementById('chatbox');
+  const toggle = document.getElementById('chat-toggle');
+  
+  chatOpen = !chatOpen;
+  
+  if (chatOpen) {
+    chatbox.classList.add('open');
+    toggle.classList.add('active');
+    toggle.innerHTML = '✕';
+    document.getElementById('chat-input').focus();
+  } else {
+    chatbox.classList.remove('open');
+    toggle.classList.remove('active');
+    toggle.innerHTML = '🤖';
+  }
+}
+
+// Close chat when clicking outside
+document.addEventListener('click', function(event) {
+  const chatbox = document.getElementById('chatbox');
+  const toggle = document.getElementById('chat-toggle');
+  
+  if (chatOpen && !chatbox.contains(event.target) && !toggle.contains(event.target)) {
+    toggleChat();
+  }
+});
+
+// Enhanced send chat function
+async function sendChat() {
+  const input = document.getElementById('chat-input');
+  const sendBtn = document.getElementById('chat-send');
+  const text = input.value.trim();
+  
+  if (!text) return;
+  
+  // Disable input and button
+  input.disabled = true;
+  sendBtn.disabled = true;
+  
+  // Add user message
+  addChatMessage(text, 'user');
+  input.value = '';
+  
+  // Show typing indicator
+  const typingDiv = addTypingIndicator();
+  
+  try {
+    const res = await fetch('/chatbot', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ q: text })
+    });
+    const data = await res.json();
+    
+    // Remove typing indicator
+    typingDiv.remove();
+    
+    // Add bot response with delay for natural feel
+    setTimeout(() => {
+      addChatMessage(data.answer, 'bot');
+    }, 500);
+    
+  } catch (error) {
+    typingDiv.remove();
+    addChatMessage('Sorry, I\'m having trouble connecting. Please try again in a moment.', 'bot');
+  } finally {
+    // Re-enable input and button
+    input.disabled = false;
+    sendBtn.disabled = false;
+    input.focus();
+  }
+}
+
+function addChatMessage(message, sender) {
+  const chatBody = document.getElementById('chat-body');
+  const messageDiv = document.createElement('div');
+  messageDiv.className = `chat-message ${sender}`;
+  
+  // Format message with better HTML support
+  if (sender === 'bot') {
+    messageDiv.innerHTML = formatBotMessage(message);
+  } else {
+    messageDiv.textContent = message;
+  }
+  
+  chatBody.appendChild(messageDiv);
+  chatBody.scrollTop = chatBody.scrollHeight;
+}
+
+function formatBotMessage(message) {
+  // Convert simple formatting to HTML
+  return message
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+    .replace(/\n/g, '<br>');
+}
+
+function addTypingIndicator() {
+  const chatBody = document.getElementById('chat-body');
+  const typingDiv = document.createElement('div');
+  typingDiv.className = 'chat-message typing';
+  typingDiv.innerHTML = `
+    <span style="color: var(--text-muted); font-size: 0.9rem;">AI Tutor is thinking</span>
+    <div class="typing-dots">
+      <div class="typing-dot"></div>
+      <div class="typing-dot"></div>
+      <div class="typing-dot"></div>
+    </div>
+  `;
+  chatBody.appendChild(typingDiv);
+  chatBody.scrollTop = chatBody.scrollHeight;
+  return typingDiv;
+}
+
+// Auto-open chat with welcome message after 3 seconds
+setTimeout(() => {
+  if (!chatOpen) {
+    const toggle = document.getElementById('chat-toggle');
+    toggle.style.animation = 'pulse 1s ease-in-out 3';
+  }
+}, 3000);
+</script>
+{% endblock %}

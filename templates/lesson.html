@@ -1,0 +1,297 @@
+{% extends "base.html" %}
+
+{% block title %}{{ lesson['title'] }} - Smart Learning Cloud{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 2rem;">
+  <a href="{{ url_for('student') }}" style="color: var(--primary); text-decoration: none; font-weight: 500;">
+    ← Back to Courses
+  </a>
+</div>
+
+<div class="card" style="margin-bottom: 2rem;">
+  <h1 style="margin: 0 0 1rem 0; color: var(--primary);">{{ lesson['title'] }}</h1>
+  <p style="font-size: 1.1rem; color: var(--text-light); margin: 0;">{{ lesson['description'] }}</p>
+</div>
+
+{% if lesson['video_url'] %}
+<div class="card" style="padding: 0; margin-bottom: 2rem;">
+  <div style="padding: 1rem; border-bottom: 1px solid var(--border);">
+    <h3 style="margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+      📺 Video Lesson
+    </h3>
+  </div>
+  <div class="video-container">
+    {% set video_url = lesson['video_url'] %}
+    {% if video_url.startswith('/uploads/videos/') %}
+      <!-- Uploaded video file -->
+      <video controls style="width: 100%; height: 100%; position: absolute; top: 0; left: 0;">
+        <source src="{{ video_url }}" type="video/mp4">
+        <source src="{{ video_url }}" type="video/webm">
+        <source src="{{ video_url }}" type="video/ogg">
+        Your browser does not support the video tag.
+      </video>
+    {% elif 'youtube.com' in video_url or 'youtu.be' in video_url %}
+      {% set embed_url = video_url | replace('watch?v=', 'embed/') | replace('youtu.be/', 'youtube.com/embed/') %}
+      <iframe src="{{ embed_url }}?rel=0&modestbranding=1" allowfullscreen></iframe>
+    {% elif 'vimeo.com' in video_url %}
+      {% set video_id = video_url.split('/')[-1] %}
+      <iframe src="https://player.vimeo.com/video/{{ video_id }}" allowfullscreen></iframe>
+    {% else %}
+      <iframe src="{{ video_url }}" allowfullscreen></iframe>
+    {% endif %}
+  </div>
+</div>
+{% else %}
+<div class="alert alert-info">
+  <strong>📹 Video Coming Soon!</strong> The teacher is preparing the video content for this lesson.
+</div>
+{% endif %}
+
+<div class="cards">
+  {% if quiz %}
+  <div class="card">
+    <h3 style="margin-top: 0; display: flex; align-items: center; gap: 0.5rem;">
+      📋 {{ quiz['title'] }}
+    </h3>
+    <p>Test your understanding of the concepts covered in this lesson.</p>
+    <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+      <a class="btn" href="{{ url_for('quiz', quiz_id=quiz['id']) }}">
+        🚀 Take Quiz
+      </a>
+    </div>
+  </div>
+  {% else %}
+  <div class="card">
+    <h3 style="margin-top: 0;">📋 Quiz</h3>
+    <p>Quiz for this lesson is being prepared by the teacher.</p>
+    <span class="badge badge-warning">Coming Soon</span>
+  </div>
+  {% endif %}
+  
+  <div class="card" style="background: linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(14, 165, 233, 0.1) 100%); border: 1px solid rgba(37, 99, 235, 0.2);">
+    <h3 style="margin-top: 0; color: var(--primary); display: flex; align-items: center; gap: 0.5rem;">
+      <span style="font-size: 1.5rem;">🤖</span> AI Tutor Available
+    </h3>
+    <p style="color: var(--text-light); margin-bottom: 1.5rem;">Have questions about this lesson? Get instant help from our AI tutor!</p>
+    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+      <button onclick="toggleChat()" class="btn" style="background: var(--gradient); border: none;">
+        💬 Start Chat
+      </button>
+      <div style="display: flex; align-items: center; gap: 0.5rem; color: var(--success); font-size: 0.9rem;">
+        <div class="status-dot"></div>
+        Available 24/7
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card" style="margin-top: 2rem; background: linear-gradient(135deg, rgba(5, 150, 105, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%); border: 1px solid rgba(5, 150, 105, 0.2);">
+  <h3 style="margin-top: 0; color: var(--success); display: flex; align-items: center; gap: 0.5rem;">
+    <span style="font-size: 1.5rem;">📝</span> Learning Tips for Success
+  </h3>
+  <div style="display: grid; gap: 1rem;">
+    <div style="display: flex; align-items: center; gap: 1rem; padding: 0.75rem; background: rgba(255, 255, 255, 0.7); border-radius: 0.5rem;">
+      <span style="background: var(--success); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 600;">1</span>
+      <span>Watch the video at your own pace - pause and rewind as needed</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 1rem; padding: 0.75rem; background: rgba(255, 255, 255, 0.7); border-radius: 0.5rem;">
+      <span style="background: var(--success); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 600;">2</span>
+      <span>Take detailed notes of key concepts and formulas</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 1rem; padding: 0.75rem; background: rgba(255, 255, 255, 0.7); border-radius: 0.5rem;">
+      <span style="background: var(--success); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 600;">3</span>
+      <span>Focus on understanding the 'why' behind each concept</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 1rem; padding: 0.75rem; background: rgba(255, 255, 255, 0.7); border-radius: 0.5rem;">
+      <span style="background: var(--success); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 600;">4</span>
+      <span>Complete the entire video before attempting the quiz</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 1rem; padding: 0.75rem; background: rgba(255, 255, 255, 0.7); border-radius: 0.5rem;">
+      <span style="background: var(--success); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 600;">5</span>
+      <span>Use the AI tutor whenever you need clarification</span>
+    </div>
+  </div>
+</div>
+
+<!-- AI Tutor Chatbot Toggle Button -->
+<button id="chat-toggle" class="chat-toggle" onclick="toggleChat()">
+  🤖
+</button>
+
+<!-- Enhanced AI Tutor Chatbot -->
+<div id="chatbox" class="chatbox">
+  <div class="chat-header">
+    <div class="chat-header-left">
+      <div class="chat-avatar">🤖</div>
+      <div>
+        <div style="font-weight: 600;">AI Tutor</div>
+        <div class="chat-status">
+          <div class="status-dot"></div>
+          Online
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="chat-body" id="chat-body">
+    <div class="chat-message bot">
+      <div style="margin-bottom: 0.5rem;">👋 Hi! I'm here to help you with "{{ lesson['title'] }}"</div>
+      <div style="font-size: 0.9rem; color: var(--text-light);">
+        <strong>I can help you with:</strong>
+        <div style="margin: 0.75rem 0; display: grid; gap: 0.5rem;">
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <span style="color: var(--success);">📚</span> Explaining lesson concepts
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <span style="color: var(--secondary);">❓</span> Answering your questions
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <span style="color: var(--warning);">🎯</span> Quiz preparation tips
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <span style="color: var(--primary);">💡</span> Study strategies
+          </div>
+        </div>
+        <strong>What would you like to know about this lesson?</strong>
+      </div>
+    </div>
+  </div>
+  <div class="chat-input">
+    <input id="chat-input" placeholder="Ask me about this lesson..." onkeypress="if(event.key==='Enter' && !event.shiftKey) { event.preventDefault(); sendChat(); }" />
+    <button id="chat-send" class="chat-send-btn" onclick="sendChat()">
+      ➤
+    </button>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Chat functionality
+let chatOpen = false;
+
+function toggleChat() {
+  const chatbox = document.getElementById('chatbox');
+  const toggle = document.getElementById('chat-toggle');
+  
+  chatOpen = !chatOpen;
+  
+  if (chatOpen) {
+    chatbox.classList.add('open');
+    toggle.classList.add('active');
+    toggle.innerHTML = '✕';
+    document.getElementById('chat-input').focus();
+  } else {
+    chatbox.classList.remove('open');
+    toggle.classList.remove('active');
+    toggle.innerHTML = '🤖';
+  }
+}
+
+// Close chat when clicking outside
+document.addEventListener('click', function(event) {
+  const chatbox = document.getElementById('chatbox');
+  const toggle = document.getElementById('chat-toggle');
+  
+  if (chatOpen && !chatbox.contains(event.target) && !toggle.contains(event.target)) {
+    toggleChat();
+  }
+});
+
+// Enhanced send chat function
+async function sendChat() {
+  const input = document.getElementById('chat-input');
+  const sendBtn = document.getElementById('chat-send');
+  const text = input.value.trim();
+  
+  if (!text) return;
+  
+  // Disable input and button
+  input.disabled = true;
+  sendBtn.disabled = true;
+  
+  // Add user message
+  addChatMessage(text, 'user');
+  input.value = '';
+  
+  // Show typing indicator
+  const typingDiv = addTypingIndicator();
+  
+  try {
+    const res = await fetch('/chatbot', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ q: text })
+    });
+    const data = await res.json();
+    
+    // Remove typing indicator
+    typingDiv.remove();
+    
+    // Add bot response with delay for natural feel
+    setTimeout(() => {
+      addChatMessage(data.answer, 'bot');
+    }, 500);
+    
+  } catch (error) {
+    typingDiv.remove();
+    addChatMessage('Sorry, I\'m having trouble connecting. Please try again in a moment.', 'bot');
+  } finally {
+    // Re-enable input and button
+    input.disabled = false;
+    sendBtn.disabled = false;
+    input.focus();
+  }
+}
+
+function addChatMessage(message, sender) {
+  const chatBody = document.getElementById('chat-body');
+  const messageDiv = document.createElement('div');
+  messageDiv.className = `chat-message ${sender}`;
+  
+  // Format message with better HTML support
+  if (sender === 'bot') {
+    messageDiv.innerHTML = formatBotMessage(message);
+  } else {
+    messageDiv.textContent = message;
+  }
+  
+  chatBody.appendChild(messageDiv);
+  chatBody.scrollTop = chatBody.scrollHeight;
+}
+
+function formatBotMessage(message) {
+  // Convert simple formatting to HTML
+  return message
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+    .replace(/\n/g, '<br>');
+}
+
+function addTypingIndicator() {
+  const chatBody = document.getElementById('chat-body');
+  const typingDiv = document.createElement('div');
+  typingDiv.className = 'chat-message typing';
+  typingDiv.innerHTML = `
+    <span style="color: var(--text-muted); font-size: 0.9rem;">AI Tutor is thinking</span>
+    <div class="typing-dots">
+      <div class="typing-dot"></div>
+      <div class="typing-dot"></div>
+      <div class="typing-dot"></div>
+    </div>
+  `;
+  chatBody.appendChild(typingDiv);
+  chatBody.scrollTop = chatBody.scrollHeight;
+  return typingDiv;
+}
+
+// Legacy function for backward compatibility
+function openChatbot() {
+  if (!chatOpen) toggleChat();
+}
+
+function closeChatbot() {
+  if (chatOpen) toggleChat();
+}
+</script>
+{% endblock %}

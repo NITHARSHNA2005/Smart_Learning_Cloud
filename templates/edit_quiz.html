@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Quiz - {{ quiz['title'] }} - Smart Learning Cloud{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 2rem;">
+  <a href="{{ url_for('teacher') }}" style="color: var(--primary); text-decoration: none; font-weight: 500;">
+    ← Back to Teacher Dashboard
+  </a>
+</div>
+
+<div class="card" style="margin-bottom: 2rem;">
+  <h1 style="margin: 0 0 1rem 0; color: var(--primary);">✏️ Edit Quiz</h1>
+  <p style="color: var(--text-light); margin: 0;">
+    Editing quiz for: <strong>{{ lesson['title'] }}</strong>
+  </p>
+</div>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ 'success' if category == 'success' else 'danger' }}" style="margin-bottom: 1rem;">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+<form method="post" id="quiz-form">
+  <div class="card" style="margin-bottom: 2rem;">
+    <h3 style="margin-top: 0;">Quiz Details</h3>
+    <div class="form-group">
+      <label for="quiz_title">Quiz Title</label>
+      <input type="text" id="quiz_title" name="quiz_title" class="form-control" 
+             value="{{ quiz['title'] }}" required>
+    </div>
+  </div>
+
+  <div id="questions-container">
+    {% for question in questions %}
+    <div class="card" style="margin-bottom: 2rem;" id="question-{{ loop.index }}">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h3 style="margin: 0;">Question {{ loop.index }}</h3>
+        <button type="button" onclick="removeQuestion({{ loop.index }})" class="btn btn-danger" style="padding: 0.5rem;">
+          🗑️ Remove
+        </button>
+      </div>
+      
+      <div class="form-group">
+        <label for="question-{{ loop.index }}-text">Question Text</label>
+        <textarea id="question-{{ loop.index }}-text" name="questions" class="form-control" rows="2" required>{{ question['question'] }}</textarea>
+      </div>
+      
+      <div class="form-group">
+        <label for="question-{{ loop.index }}-options">Answer Options (one per line)</label>
+        <textarea id="question-{{ loop.index }}-options" name="options" class="form-control" rows="4" required>{% for option in question['options']|from_json %}{{ option }}{% if not loop.last %}
+{% endif %}{% endfor %}</textarea>
+      </div>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div class="form-group">
+          <label for="question-{{ loop.index }}-answer">Correct Answer</label>
+          <select id="question-{{ loop.index }}-answer" name="correct_answers" class="form-control" required>
+            {% for option in question['options']|from_json %}
+            <option value="{{ loop.index0 }}" {% if loop.index0 == question['answer_index'] %}selected{% endif %}>
+              Option {{ loop.index }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="question-{{ loop.index }}-topic">Topic/Category</label>
+          <input type="text" id="question-{{ loop.index }}-topic" name="topics" class="form-control" 
+                 value="{{ question['topic'] or 'general' }}">
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="card" style="text-align: center; margin-bottom: 2rem;">
+    <button type="button" onclick="addQuestion()" class="btn btn-secondary">
+      ➕ Add Question
+    </button>
+    <button type="submit" class="btn" style="margin-left: 1rem;">
+      ✨ Update Quiz
+    </button>
+    <a href="{{ url_for('teacher') }}" class="btn btn-secondary" style="margin-left: 1rem;">
+      Cancel
+    </a>
+  </div>
+</form>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let questionCount = {{ questions|length }};
+
+function addQuestion() {
+  questionCount++;
+  const container = document.getElementById('questions-container');
+  
+  const questionDiv = document.createElement('div');
+  questionDiv.className = 'card';
+  questionDiv.style.marginBottom = '2rem';
+  questionDiv.id = `question-${questionCount}`;
+  
+  questionDiv.innerHTML = `
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+      <h3 style="margin: 0;">Question ${questionCount}</h3>
+      <button type="button" onclick="removeQuestion(${questionCount})" class="btn btn-danger" style="padding: 0.5rem;">
+        🗑️ Remove
+      </button>
+    </div>
+    
+    <div class="form-group">
+      <label for="question-${questionCount}-text">Question Text</label>
+      <textarea id="question-${questionCount}-text" name="questions" class="form-control" rows="2" 
+                placeholder="Enter your question here..." required></textarea>
+    </div>
+    
+    <div class="form-group">
+      <label for="question-${questionCount}-options">Answer Options (one per line)</label>
+      <textarea id="question-${questionCount}-options" name="options" class="form-control" rows="4" 
+                placeholder="Option 1&#10;Option 2&#10;Option 3&#10;Option 4" required></textarea>
+    </div>
+    
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+      <div class="form-group">
+        <label for="question-${questionCount}-answer">Correct Answer (1-4)</label>
+        <select id="question-${questionCount}-answer" name="correct_answers" class="form-control" required>
+          <option value="0">Option 1</option>
+          <option value="1">Option 2</option>
+          <option value="2">Option 3</option>
+          <option value="3">Option 4</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label for="question-${questionCount}-topic">Topic/Category</label>
+        <input type="text" id="question-${questionCount}-topic" name="topics" class="form-control" 
+               placeholder="e.g., algebra, fractions" value="general">
+      </div>
+    </div>
+  `;
+  
+  container.appendChild(questionDiv);
+  document.getElementById(`question-${questionCount}-text`).focus();
+}
+
+function removeQuestion(questionId) {
+  const questionDiv = document.getElementById(`question-${questionId}`);
+  if (questionDiv) {
+    questionDiv.remove();
+  }
+  renumberQuestions();
+}
+
+function renumberQuestions() {
+  const questions = document.querySelectorAll('[id^="question-"]');
+  questions.forEach((question, index) => {
+    const newNumber = index + 1;
+    const h3 = question.querySelector('h3');
+    if (h3) {
+      h3.textContent = `Question ${newNumber}`;
+    }
+  });
+}
+
+// Form validation
+document.getElementById('quiz-form').addEventListener('submit', function(e) {
+  const questions = document.querySelectorAll('textarea[name="questions"]');
+  if (questions.length === 0) {
+    e.preventDefault();
+    alert('Please add at least one question.');
+    return;
+  }
+  
+  let hasValidQuestion = false;
+  questions.forEach(question => {
+    if (question.value.trim()) {
+      hasValidQuestion = true;
+    }
+  });
+  
+  if (!hasValidQuestion) {
+    e.preventDefault();
+    alert('Please enter at least one valid question.');
+    return;
+  }
+});
+</script>
+{% endblock %}

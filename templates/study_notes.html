@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+{% block title %}Study Notes - Smart Learning Cloud{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="page-header">
+    <h1>📝 Study Notes</h1>
+    <p>Create and organize your personal study notes</p>
+  </div>
+
+  <div class="study-notes-container">
+    <div class="notes-section">
+      <h3>📚 Mathematics Notes</h3>
+      <div class="note-card">
+        <h4>Fractions</h4>
+        <ul>
+          <li><strong>Definition:</strong> A fraction represents part of a whole</li>
+          <li><strong>Parts:</strong> Numerator (top) and Denominator (bottom)</li>
+          <li><strong>Adding:</strong> Same denominator → add numerators</li>
+          <li><strong>Example:</strong> 1/4 + 2/4 = 3/4</li>
+        </ul>
+      </div>
+      
+      <div class="note-card">
+        <h4>Decimals</h4>
+        <ul>
+          <li><strong>Converting:</strong> Divide numerator by denominator</li>
+          <li><strong>Example:</strong> 3/4 = 3 ÷ 4 = 0.75</li>
+          <li><strong>Common conversions:</strong> 1/2 = 0.5, 1/4 = 0.25</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="notes-section">
+      <h3>💡 Study Tips</h3>
+      <div class="tip-card">
+        <h4>🎯 Effective Learning</h4>
+        <ul>
+          <li>Watch videos completely before taking notes</li>
+          <li>Practice problems immediately after learning</li>
+          <li>Use the AI tutor for instant clarification</li>
+          <li>Review notes before taking quizzes</li>
+        </ul>
+      </div>
+      
+      <div class="tip-card">
+        <h4>📊 Quiz Strategy</h4>
+        <ul>
+          <li>Read questions carefully</li>
+          <li>Eliminate wrong answers first</li>
+          <li>Don't rush - take your time</li>
+          <li>Review your answers before submitting</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="notes-section">
+      <h3>🏆 Quick Reference</h3>
+      <div class="reference-grid">
+        <div class="ref-card">
+          <h4>Fraction Operations</h4>
+          <p><strong>Add:</strong> Same denominator</p>
+          <p><strong>Subtract:</strong> Same denominator</p>
+          <p><strong>Multiply:</strong> Across</p>
+          <p><strong>Divide:</strong> Flip and multiply</p>
+        </div>
+        
+        <div class="ref-card">
+          <h4>Common Decimals</h4>
+          <p>1/2 = 0.5</p>
+          <p>1/4 = 0.25</p>
+          <p>3/4 = 0.75</p>
+          <p>1/5 = 0.2</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.study-notes-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  display: grid;
+  gap: 2rem;
+}
+
+.notes-section {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+}
+
+.notes-section h3 {
+  color: var(--primary);
+  margin: 0 0 1rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.note-card, .tip-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.note-card h4, .tip-card h4 {
+  color: var(--text);
+  margin: 0 0 0.75rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.note-card ul, .tip-card ul {
+  margin: 0;
+  padding-left: 1.25rem;
+  color: var(--text-light);
+}
+
+.note-card li, .tip-card li {
+  margin-bottom: 0.5rem;
+  line-height: 1.5;
+}
+
+.reference-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.ref-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  text-align: center;
+}
+
+.ref-card h4 {
+  color: var(--secondary);
+  margin: 0 0 0.75rem 0;
+  font-size: 0.9rem;
+}
+
+.ref-card p {
+  margin: 0.25rem 0;
+  font-size: 0.85rem;
+  color: var(--text-light);
+}
+
+@media (max-width: 768px) {
+  .reference-grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+{% endblock %}

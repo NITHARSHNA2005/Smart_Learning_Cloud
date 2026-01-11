@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Login - Smart Learning Cloud</title>
+  <meta name="description" content="AI-powered smart learning platform connecting urban teachers with rural students">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Styles -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
+</head>
+<body style="background: var(--gradient); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 1rem;">
+  
+  <div style="width: 100%; max-width: 420px;">
+    <!-- Logo and Title -->
+    <div style="text-align: center; margin-bottom: 2rem;">
+      <div style="font-size: 3.5rem; margin-bottom: 0.5rem;">🎓</div>
+      <h1 style="color: white; margin: 0 0 0.5rem 0; font-size: 1.8rem; font-weight: 800;">Smart Learning Cloud</h1>
+      <p style="color: rgba(255, 255, 255, 0.9); margin: 0; font-size: 1rem;">Sign in to your account</p>
+    </div>
+
+    <!-- Login Card -->
+    <div class="card" style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); box-shadow: var(--shadow-xl); margin-bottom: 1.5rem;">
+      <div style="text-align: center; margin-bottom: 2rem;">
+        <h2 style="margin: 0 0 0.5rem 0; color: var(--primary); font-size: 1.5rem;">Welcome Back!</h2>
+        <p style="color: var(--text-light); margin: 0; font-size: 0.9rem;">Enter your credentials to continue</p>
+      </div>
+      
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="alert alert-{{ 'success' if category == 'success' else 'danger' }}" style="margin-bottom: 1.5rem;">
+              {{ message }}
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      <form method="post">
+        <!-- Email Input -->
+        <div class="form-group">
+          <label for="email" style="color: var(--text); font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">
+            <span style="color: var(--primary);">📧</span> Email Address
+          </label>
+          <input type="email" id="email" name="email" class="form-control" placeholder="Enter your email address" required 
+                 style="border: 2px solid var(--border); transition: all 0.3s ease;" 
+                 onfocus="this.style.borderColor='var(--primary)'; this.style.boxShadow='0 0 0 3px rgba(37, 99, 235, 0.1)'" 
+                 onblur="this.style.borderColor='var(--border)'; this.style.boxShadow='none'">
+        </div>
+
+        <!-- Password Input -->
+        <div class="form-group">
+          <label for="password" style="color: var(--text); font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">
+            <span style="color: var(--secondary);">🔒</span> Password
+          </label>
+          <div style="position: relative;">
+            <input type="password" id="password" name="password" class="form-control" placeholder="Enter your password" required 
+                   style="border: 2px solid var(--border); transition: all 0.3s ease; padding-right: 3rem;" 
+                   onfocus="this.style.borderColor='var(--primary)'; this.style.boxShadow='0 0 0 3px rgba(37, 99, 235, 0.1)'" 
+                   onblur="this.style.borderColor='var(--border)'; this.style.boxShadow='none'">
+            <button type="button" onclick="togglePassword()" style="position: absolute; right: 0.75rem; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-light); cursor: pointer; font-size: 1.2rem;" id="toggleBtn">👁️</button>
+          </div>
+        </div>
+
+        <!-- Login Button -->
+        <div style="display: flex; justify-content: center;">
+          <button type="submit" class="btn" style="width: 100%; background: var(--gradient); border: none; padding: 1rem; font-size: 1.1rem; font-weight: 600; margin-top: 0.5rem; box-shadow: var(--shadow-md); transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='var(--shadow-lg)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='var(--shadow-md)'">
+            🚀 Sign In
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Register Link -->
+    <div class="card" style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); text-align: center; padding: 1.5rem;">
+      <p style="color: white; margin: 0 0 1rem 0; font-size: 0.95rem;">Don't have an account?</p>
+      <div style="display: flex; justify-content: center;">
+        <a href="{{ url_for('register') }}" class="btn" style="background: rgba(255, 255, 255, 0.2); color: white; border: 2px solid rgba(255, 255, 255, 0.3); padding: 0.75rem 1.5rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 600; transition: all 0.3s ease;" onmouseover="this.style.background='rgba(255, 255, 255, 0.3)'; this.style.borderColor='rgba(255, 255, 255, 0.5)'" onmouseout="this.style.background='rgba(255, 255, 255, 0.2)'; this.style.borderColor='rgba(255, 255, 255, 0.3)'">
+          ✨ Create New Account
+        </a>
+      </div>
+    </div>
+
+    <!-- Demo Credentials -->
+    <div style="margin-top: 1.5rem; text-align: center;">
+      <p style="color: rgba(255, 255, 255, 0.8); margin: 0 0 1rem 0; font-size: 0.9rem; font-weight: 500;">Demo Credentials:</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div style="background: rgba(255, 255, 255, 0.1); padding: 1rem; border-radius: 0.5rem; backdrop-filter: blur(10px);">
+          <div style="color: white; font-weight: 600; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem; justify-content: center;">
+            <span>🎓</span> Student
+          </div>
+          <div style="color: rgba(255, 255, 255, 0.9); font-size: 0.8rem; line-height: 1.4;">
+            <div>student@smartlearning.com</div>
+            <div>student123</div>
+          </div>
+        </div>
+        <div style="background: rgba(255, 255, 255, 0.1); padding: 1rem; border-radius: 0.5rem; backdrop-filter: blur(10px);">
+          <div style="color: white; font-weight: 600; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem; justify-content: center;">
+            <span>👩🏫</span> Teacher
+          </div>
+          <div style="color: rgba(255, 255, 255, 0.9); font-size: 0.8rem; line-height: 1.4;">
+            <div>teacher@smartlearning.com</div>
+            <div>teacher123</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function togglePassword() {
+      const passwordInput = document.getElementById('password');
+      const toggleBtn = document.getElementById('toggleBtn');
+      
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        toggleBtn.textContent = '🙈';
+      } else {
+        passwordInput.type = 'password';
+        toggleBtn.textContent = '👁️';
+      }
+    }
+
+    // Auto-focus on email input
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('email').focus();
+    });
+
+    // Enter key navigation
+    document.getElementById('email').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        document.getElementById('password').focus();
+      }
+    });
+  </script>
+</body>
+</html>

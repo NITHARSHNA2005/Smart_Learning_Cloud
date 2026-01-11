@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Smart Learning Cloud - Bridging Urban-Rural Education{% endblock %}</title>
+  <meta name="description" content="AI-powered smart learning platform connecting urban teachers with rural students through live classes, quizzes, and AI tutoring.">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Styles -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
+</head>
+<body>
+  <nav class="topbar">
+    <div class="brand">Smart Learning Cloud</div>
+    <div class="navlinks">
+      {% if session.user_type == 'student' %}
+        <a href="{{ url_for('student') }}">My Courses</a>
+        <a href="{{ url_for('messages') }}">💬 Messages</a>
+        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+      {% elif session.user_type == 'teacher' %}
+        <a href="{{ url_for('teacher') }}">My Lessons</a>
+        <a href="{{ url_for('messages') }}">💬 Messages</a>
+        <a href="{{ url_for('attempts') }}">Results</a>
+      {% endif %}
+      
+      {% if session.username %}
+        <span style="color: var(--text-light); font-size: 0.9rem; padding: 0.5rem 1rem;">
+          {{ '👩🏫' if session.user_type == 'teacher' else '🎓' }} {{ session.username }}
+        </span>
+        <a href="{{ url_for('logout') }}" style="background: var(--danger); color: white; border-radius: 0.5rem;">Logout</a>
+      {% endif %}
+    </div>
+  </nav>
+  
+  <main class="container">
+    {% block content %}{% endblock %}
+  </main>
+  
+  <!-- Scripts -->
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

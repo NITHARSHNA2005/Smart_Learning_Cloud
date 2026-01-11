@@ -1,0 +1,345 @@
+{% extends "base.html" %}
+{% block title %}Messages - Smart Learning Cloud{% endblock %}
+{% block content %}
+<div class="messages-wrapper">
+  <div class="messages-header">
+    <div class="header-content">
+      <h1>💬 Messages</h1>
+      <p>Connect with {{ 'students' if session.user_type == 'teacher' else 'teachers' }} for doubts and clarifications</p>
+    </div>
+    <div class="header-actions">
+      <button class="action-btn" title="Search">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+        </svg>
+      </button>
+      <button class="action-btn" title="New Message">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="conversations-container">
+    {% if conversations %}
+      <div class="conversations-list">
+        {% for conv in conversations %}
+          <a href="{{ url_for('chat', other_user_id=conv.id) }}" class="conversation-item">
+            <div class="conversation-avatar">
+              <div class="avatar-circle {{ 'teacher' if session.user_type == 'student' else 'student' }}">
+                {{ '👩🏫' if session.user_type == 'student' else '🎓' }}
+              </div>
+              <div class="online-indicator"></div>
+            </div>
+            <div class="conversation-content">
+              <div class="conversation-header">
+                <h3 class="conversation-name">{{ conv.name }}</h3>
+                <span class="conversation-time">2m ago</span>
+              </div>
+              <div class="conversation-preview">
+                <p class="last-message">Click to start chatting...</p>
+                {% if conv.unread_count > 0 %}
+                  <div class="unread-count">{{ conv.unread_count }}</div>
+                {% endif %}
+              </div>
+            </div>
+          </a>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty-conversations">
+        <div class="empty-illustration">
+          <div class="empty-circle">
+            <svg width="60" height="60" viewBox="0 0 24 24" fill="currentColor" opacity="0.3">
+              <path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h4l4 4 4-4h4c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
+            </svg>
+          </div>
+        </div>
+        <h3>No conversations yet</h3>
+        <p class="empty-description">
+          {% if session.user_type == 'teacher' %}
+            Students will appear here when they send you messages. You'll be able to help them with their questions and provide guidance.
+          {% else %}
+            Start a conversation with any teacher for help and guidance. Don't hesitate to ask questions!
+          {% endif %}
+        </p>
+        <button class="start-chat-btn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h4l4 4 4-4h4c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
+          </svg>
+          {{ 'Browse Students' if session.user_type == 'teacher' else 'Find Teachers' }}
+        </button>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+<style>
+.messages-wrapper {
+  max-width: 900px;
+  margin: 0 auto;
+  background: var(--card);
+  border-radius: 1rem;
+  box-shadow: var(--shadow-xl);
+  overflow: hidden;
+  min-height: calc(100vh - 140px);
+}
+
+.messages-header {
+  background: var(--gradient);
+  color: white;
+  padding: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-content h1 {
+  margin: 0 0 0.5rem 0;
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+.header-content p {
+  margin: 0;
+  opacity: 0.9;
+  font-size: 1.1rem;
+}
+
+.header-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.action-btn {
+  width: 44px;
+  height: 44px;
+  background: rgba(255,255,255,0.1);
+  border: none;
+  border-radius: 50%;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.action-btn:hover {
+  background: rgba(255,255,255,0.2);
+  transform: scale(1.05);
+}
+
+.conversations-container {
+  padding: 0;
+}
+
+.conversations-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.conversation-item {
+  display: flex;
+  align-items: center;
+  padding: 1.25rem 2rem;
+  text-decoration: none;
+  color: inherit;
+  border-bottom: 1px solid var(--border);
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.conversation-item:hover {
+  background: var(--bg);
+  transform: translateX(4px);
+}
+
+.conversation-item:last-child {
+  border-bottom: none;
+}
+
+.conversation-avatar {
+  position: relative;
+  margin-right: 1rem;
+}
+
+.avatar-circle {
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  border: 3px solid var(--border);
+  transition: all 0.3s ease;
+}
+
+.avatar-circle.teacher {
+  background: linear-gradient(135deg, #0ea5e9 0%, #3b82f6 100%);
+  border-color: rgba(14, 165, 233, 0.3);
+}
+
+.avatar-circle.student {
+  background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+  border-color: rgba(5, 150, 105, 0.3);
+}
+
+.online-indicator {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 14px;
+  height: 14px;
+  background: #10b981;
+  border: 2px solid white;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+.conversation-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.conversation-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.25rem;
+}
+
+.conversation-name {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.conversation-time {
+  font-size: 0.8rem;
+  color: var(--text-light);
+  white-space: nowrap;
+}
+
+.conversation-preview {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.last-message {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--text-light);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+}
+
+.unread-count {
+  background: var(--primary);
+  color: white;
+  border-radius: 12px;
+  padding: 0.2rem 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  min-width: 20px;
+  text-align: center;
+  margin-left: 0.5rem;
+}
+
+.empty-conversations {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+  min-height: 400px;
+}
+
+.empty-illustration {
+  margin-bottom: 2rem;
+}
+
+.empty-circle {
+  width: 120px;
+  height: 120px;
+  background: var(--bg);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  border: 2px solid var(--border);
+}
+
+.empty-conversations h3 {
+  margin: 0 0 1rem 0;
+  color: var(--text);
+  font-size: 1.5rem;
+}
+
+.empty-description {
+  color: var(--text-light);
+  max-width: 400px;
+  margin: 0 auto 2rem;
+  line-height: 1.6;
+}
+
+.start-chat-btn {
+  background: var(--gradient);
+  color: white;
+  border: none;
+  padding: 0.75rem 2rem;
+  border-radius: 2rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+}
+
+.start-chat-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@media (max-width: 768px) {
+  .messages-wrapper {
+    margin: 0;
+    border-radius: 0;
+    min-height: calc(100vh - 80px);
+  }
+  
+  .messages-header {
+    padding: 1.5rem 1rem;
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+  
+  .conversation-item {
+    padding: 1rem;
+  }
+  
+  .header-actions {
+    order: -1;
+  }
+}
+</style>
+{% endblock %}
